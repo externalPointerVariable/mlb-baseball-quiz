@@ -1,0 +1,6 @@
+import os
+
+GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
+GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
+SECRET = os.getenv("SECRET")
+DATABASE_URL = os.getenv("DATABASE_URL")
