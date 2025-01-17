@@ -1,3 +1,4 @@
+# app/main.py
 from fastapi import FastAPI
 from app.routers import preferences, content, mlb_data
 from db import database, async_engine, Base
