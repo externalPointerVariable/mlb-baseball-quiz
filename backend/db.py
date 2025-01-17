@@ -1,57 +1,34 @@
-from fastapi import FastAPI
-from fastapi_users.db import SQLAlchemyUserDatabase
-from fastapi_users import FastAPIUsers, models
-from fastapi_users.authentication import CookieAuthentication
-from fastapi_users.authentication.strategy.oauth2 import OAuth2AuthorizationCodeBearer
-from sqlalchemy import create_engine, Column, Integer, String, Boolean
-from sqlalchemy.ext.declarative import DeclarativeMeta, declarative_base
+# db.py
+from sqlalchemy import Column, Integer, String, Boolean
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
+from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from config import GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, SECRET, DATABASE_URL
+from databases import Database
+from fastapi_users_db_sqlalchemy import SQLAlchemyBaseUserTable, SQLAlchemyUserDatabase
+from config import DATABASE_URL
 
-engine = create_engine(DATABASE_URL)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-Base: DeclarativeMeta = declarative_base()
+# Initialize the database connection
+if not DATABASE_URL:
+    raise ValueError("DATABASE_URL environment variable is not set")
 
-class User(Base, models.BaseUser, models.BaseOAuthAccountMixin):
+database = Database(DATABASE_URL)
+Base = declarative_base()
+
+class User(Base, SQLAlchemyBaseUserTable):
     id = Column(Integer, primary_key=True, index=True)
-    email = Column(String, unique=True, index=True, nullable=False)
-    hashed_password = Column(String, nullable=False)
+    email = Column(String(255), unique=True, index=True, nullable=False)
+    hashed_password = Column(String(255), nullable=False)
     is_active = Column(Boolean, default=True)
     is_superuser = Column(Boolean, default=False)
     is_verified = Column(Boolean, default=False)
 
 async def get_user_db():
-    yield SQLAlchemyUserDatabase(User, SessionLocal())
+    yield SQLAlchemyUserDatabase(User, database)
 
-oauth2_google = OAuth2AuthorizationCodeBearer(
-    client_id=GOOGLE_CLIENT_ID,
-    client_secret=GOOGLE_CLIENT_SECRET,
-    authorize_url="https://accounts.google.com/o/oauth2/auth",
-    token_url="https://oauth2.googleapis.com/token",
-    redirect_uri="http://localhost:8000/auth/callback/google",
-    scopes=["profile", "email"],
+# Create the async engine and session local
+async_engine = create_async_engine(DATABASE_URL)
+async_session_local = sessionmaker(
+    bind=async_engine,
+    class_=AsyncSession,
+    expire_on_commit=False
 )
-
-cookie_authentication = CookieAuthentication(secret=SECRET, lifetime_seconds=3600)
-
-app = FastAPI()
-
-fastapi_users = FastAPIUsers(
-    get_user_db,
-    [cookie_authentication, oauth2_google],
-    User,
-    UserCreate,
-    UserUpdate,
-    UserRead,
-)
-
-app.include_router(
-    fastapi_users.get_auth_router(cookie_authentication), prefix="/auth/jwt", tags=["auth"]
-)
-app.include_router(
-    fastapi_users.get_register_router(), prefix="/auth", tags=["auth"]
-)
-app.include_router(
-    fastapi_users.get_oauth_router(oauth2_google, "google"), prefix="/auth/oauth", tags=["auth"]
-)
-app.include_router(fastapi_users.get_users_router(), prefix="/users", tags=["users"])

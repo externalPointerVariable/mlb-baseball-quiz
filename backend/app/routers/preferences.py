@@ -1,19 +1,14 @@
-from fastapi import APIRouter, HTTPException
-from app.models.user import UserPreferences
+from fastapi import APIRouter, Depends
+from sqlalchemy.ext.asyncio import AsyncSession
+from db import async_session_local, User
+from app.users import current_user
 
 router = APIRouter()
 
-# In-memory storage for simplicity
-user_preferences_db = {}
+async def get_db():
+    async with async_session_local() as session:
+        yield session
 
-@router.post("/set_preferences/")
-def set_preferences(preferences: UserPreferences):
-    user_preferences_db[preferences.user_id] = preferences
-    return {"message": "Preferences saved successfully"}
-
-@router.get("/get_preferences/{user_id}")
-def get_preferences(user_id: str):
-    preferences = user_preferences_db.get(user_id)
-    if preferences is None:
-        raise HTTPException(status_code=404, detail="User not found")
-    return preferences
+@router.get("/preferences")
+async def read_preferences(user: User = Depends(current_user), db: AsyncSession = Depends(get_db)):
+    return {"user_id": user.id, "preferences": "User preferences here"}
