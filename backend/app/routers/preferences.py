@@ -1,0 +1,1 @@
+# Defines the endpoint for user preferences

@@ -1,0 +1,1 @@
+# Handles endpoints related to content management.
