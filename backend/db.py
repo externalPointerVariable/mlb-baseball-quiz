@@ -22,5 +22,5 @@ class User(base, SQLAlchemyBaseUserTable):
 async def user_regitration():
     yield SQLAlchemyUserDatabase(User, database)
 
-async_engine = create_async_engine(DATABASE_URL)
+async_engine = create_async_engine(DATABASE_URL, pool_pre_ping=True)
 async_session = sessionmaker(bind = async_engine, expire_on_commit=False, class_= AsyncSession)
