@@ -1,7 +1,8 @@
 from google.cloud import aiplatform
 import os
+from config import GOOGLE_APPLICATION_CREDENTIALS
 
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "path/to/your/service-account-file.json"
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = GOOGLE_APPLICATION_CREDENTIALS
 
 def generate_text(prompt: str) -> str:
     client = aiplatform.gapic.PredictionServiceClient()
