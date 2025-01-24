@@ -1,1 +1,0 @@
-# Manages endpoints related to MLB data.
