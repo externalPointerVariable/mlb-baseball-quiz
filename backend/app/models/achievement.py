@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
-from app.core.database import Base
+from .base import Base  # Single import for Base
 
 class Achievement(Base):
     __tablename__ = "achievements"
@@ -13,6 +13,7 @@ class Achievement(Base):
     criteria_type = Column(String(50))  # 'xp', 'quiz_count', 'perfect_score', etc
     threshold = Column(Integer)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
+    user_achievements = relationship("UserAchievement", back_populates="achievement")
 
 class UserAchievement(Base):
     __tablename__ = "user_achievements"
@@ -22,6 +23,6 @@ class UserAchievement(Base):
     achievement_id = Column(Integer, ForeignKey("achievements.id"))
     unlocked_at = Column(DateTime(timezone=True), server_default=func.now())
     
-    # Relationships
+    # Relationships with back_populates
     user = relationship("User", back_populates="achievements")
-    achievement = relationship("Achievement")
+    achievement = relationship("Achievement", back_populates="user_achievements")

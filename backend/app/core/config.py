@@ -1,4 +1,5 @@
 from pydantic_settings import BaseSettings
+import os
 
 class Settings(BaseSettings):
     DATABASE_URL: str
@@ -7,8 +8,9 @@ class Settings(BaseSettings):
     GEMINI_API_KEY: str
     SECRET_KEY: str
     ALGORITHM: str = "HS256"
-    
+
     class Config:
         env_file = ".env"
+        extra = "ignore"  # Add this to ignore extra variables
 
 settings = Settings()

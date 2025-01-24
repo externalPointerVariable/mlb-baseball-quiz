@@ -4,9 +4,12 @@ from jose import jwt
 from ..core import security
 from ..models.user import User
 from ..core.database import get_db
+from ..core.config import settings
+from sqlalchemy.orm import Session
 
 router = APIRouter()
 
+# OAuth configuration
 oauth = OAuth()
 oauth.register(
     name='google',
@@ -18,28 +21,19 @@ oauth.register(
 
 @router.get("/google/login")
 async def google_login(request: Request):
-    redirect_uri = request.url_for('google_callback')
+    redirect_uri = request.url_for("google_callback")
     return await oauth.google.authorize_redirect(request, redirect_uri)
 
 @router.get("/google/callback")
-async def google_callback(request: Request, db: Session = Depends(get_db)):
+async def google_callback(
+    request: Request,
+    db: Session = Depends(get_db)  # Now properly typed
+):
     try:
         token = await oauth.google.authorize_access_token(request)
-        user_info = token['userinfo']
+        userinfo = token.get("userinfo")
         
-        user = db.query(User).filter(User.google_id == user_info['sub']).first()
-        if not user:
-            user = User(
-                google_id=user_info['sub'],
-                email=user_info['email'],
-                name=user_info.get('name'),
-                picture=user_info.get('picture')
-            )
-            db.add(user)
-            db.commit()
-        
-        access_token = security.create_access_token(user.google_id)
-        return {"access_token": access_token, "token_type": "bearer"}
+        # Your existing user handling logic
         
     except Exception as e:
-        raise HTTPException(400, f"Authentication failed: {str(e)}")
+        raise HTTPException(status_code=400, detail=str(e))

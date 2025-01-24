@@ -1,20 +1,22 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 
 class UserBase(BaseModel):
-    email: str
+    email: EmailStr
     name: str | None = None
 
 class UserCreate(UserBase):
-    pass
+    password: str
 
 class UserUpdate(BaseModel):
+    favorite_team: str | None = None
+    favorite_player: str | None = None
+
+class UserResponse(UserBase):
+    id: int
     favorite_team: str | None
     favorite_player: str | None
-
-class User(UserBase):
-    id: int
     xp: int
     level: int
-    
+
     class Config:
         orm_mode = True
