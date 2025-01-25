@@ -25,6 +25,6 @@ async def update_preferences(
     if preferences.favorite_player:
         current_user.favorite_player = preferences.favorite_player
     
-    db.commit()
-    db.refresh(current_user)
+    await db.commit()
+    await db.refresh(current_user)
     return current_user

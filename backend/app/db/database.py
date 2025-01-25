@@ -1,22 +1,32 @@
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
-from sqlalchemy.orm import sessionmaker, declarative_base
+from sqlalchemy.orm import sessionmaker, DeclarativeBase
 from app.core.config import settings
 
-# Use async SQLite driver
+
+# Initialize async database engine
 engine = create_async_engine(
     settings.DATABASE_URL,
-    echo=True
+    echo=True # Enable SQL logging only in debug mode
 )
 
 # Async session factory
-async_session = sessionmaker(
-    engine, 
+async_session_factory = sessionmaker(
+    engine,
     class_=AsyncSession,
     expire_on_commit=False
 )
 
-Base = declarative_base()
+# Base for ORM models
+class Base(DeclarativeBase):
+    pass
 
+# Dependency to provide database session
 async def get_db():
-    async with async_session() as session:
-        yield session
+    async with async_session_factory() as session:
+        try:
+            yield session
+        except Exception as e:
+            await session.rollback()
+            raise e
+        finally:
+            await session.close()

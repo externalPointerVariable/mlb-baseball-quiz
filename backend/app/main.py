@@ -11,8 +11,8 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE"],
+    allow_headers=["Authorization", "Content-Type"],
 )
 
 app.include_router(auth.router, prefix="/api/auth")
@@ -21,18 +21,26 @@ app.include_router(profile.router, prefix="/api/profile")
 
 @app.on_event("startup")
 async def startup_event():
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
-    
-    async with async_session() as db:
-        await load_achievements(db)
-    
-    app.state.mlb_data = await fetch_mlb_data()
+    try:
+        # Create database tables
+        async with engine.begin() as conn:
+            await conn.run_sync(Base.metadata.create_all)
+        
+        # Initialize data
+        async with async_session() as session:
+            await load_achievements(session)  # Ensure this is async
+        
+        # Fetch MLB data async
+        app.state.mlb_data = await fetch_mlb_data()
+    except Exception as e:
+        print(f"Startup error: {e}")
+        app.state.mlb_data = None
 
 @app.get("/")
 async def health_check():
     return {
         "status": "running",
         "database": settings.DATABASE_URL,
-        "mlb_data": bool(app.state.mlb_data)
+        "mlb_data_loaded": bool(app.state.mlb_data),
+        "mlb_data_count": len(app.state.mlb_data) if app.state.mlb_data else 0,
     }
