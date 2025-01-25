@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.core.database import engine, Base
+from app.core.database import engine, async_session, Base
 from app.routers import auth, quiz, profile
 from app.services.mlb_data import fetch_mlb_data
 from app.core.config import settings
@@ -23,8 +23,11 @@ app.include_router(profile.router, prefix="/api/profile")
 async def startup_event():
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+    
+    async with async_session() as db:
+        await load_achievements(db)
+    
     app.state.mlb_data = await fetch_mlb_data()
-    print("✅ Services initialized")
 
 @app.get("/")
 async def health_check():

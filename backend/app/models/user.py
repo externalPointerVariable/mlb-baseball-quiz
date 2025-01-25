@@ -1,14 +1,16 @@
 from sqlalchemy import Column, Integer, String
 from .base import Base
+from sqlalchemy.orm import Mapped, mapped_column
 
 class User(Base):
     __tablename__ = "users"
     
-    id = Column(Integer, primary_key=True, index=True)
-    email = Column(String, unique=True, index=True)
-    name = Column(String)
-    hashed_password = Column(String)
-    favorite_team = Column(String)
-    favorite_player = Column(String)
-    xp = Column(Integer, default=0)
-    level = Column(Integer, default=1)
+    id: Mapped[int] = mapped_column(Column(Integer, primary_key=True, index=True))
+    email: Mapped[str] = mapped_column(Column(String, unique=True, index=True))
+    name: Mapped[str] = mapped_column(Column(String))
+    hashed_password: Mapped[str] = mapped_column(Column(String))
+    favorite_team: Mapped[str] = mapped_column(Column(String))
+    favourite_player: Mapped[str] = mapped_column(Column(String))
+    xp: Mapped[int] = mapped_column(Column(Integer, default=0))
+    level: Mapped[int] = mapped_column(Column(Integer, default=1))
+    
