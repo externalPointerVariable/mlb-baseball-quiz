@@ -1,15 +1,12 @@
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, Depends, Request
 from authlib.integrations.starlette_client import OAuth
-from jose import jwt
-from ..core import security
-from ..models.user import User
-from ..core.database import get_db
-from ..core.config import settings
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
+from app.core.config import settings
+from app.db import get_db
+from app.models.user import User
 
 router = APIRouter()
 
-# OAuth configuration
 oauth = OAuth()
 oauth.register(
     name='google',
@@ -27,13 +24,14 @@ async def google_login(request: Request):
 @router.get("/google/callback")
 async def google_callback(
     request: Request,
-    db: Session = Depends(get_db)  # Now properly typed
+    db: AsyncSession = Depends(get_db)
 ):
     try:
         token = await oauth.google.authorize_access_token(request)
         userinfo = token.get("userinfo")
         
-        # Your existing user handling logic
+        # Add user creation/login logic here
+        return {"message": "Authentication successful"}
         
     except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        return {"error": str(e)}
