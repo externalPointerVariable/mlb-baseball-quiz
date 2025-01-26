@@ -1,6 +1,7 @@
 import os
 import google.generativeai as genai
 from ..core.config import settings
+import json
 
 genai.configure(api_key=settings.GEMINI_API_KEY)
 
@@ -29,3 +30,6 @@ def generate_quiz(topic: str, difficulty: int = 3):
 def parse_response(text: str):
     clean = text.strip().replace("```json", "").replace("```", "")
     return json.loads(clean)
+
+if __name__ == "__main__":
+    print(generate_quiz("basketball", 3))
