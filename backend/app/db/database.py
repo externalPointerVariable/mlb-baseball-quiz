@@ -3,7 +3,6 @@ from sqlalchemy.orm import sessionmaker, DeclarativeBase
 from app.core.config import settings
 
 
-# Initialize async database engine
 engine = create_async_engine(
     settings.DATABASE_URL,
     echo=True # Enable SQL logging only in debug mode
