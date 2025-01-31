@@ -8,6 +8,10 @@ from core.serializers import UserSerializer, QuizSerializer
 def welcome(request):
     return response.Response({'message': 'Welcome to MLB API!'})
 
+@api_view(['GET'])
+def generate_quiz(request):
+    return response.Response({'message': 'Quiz generated!'})
+
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
