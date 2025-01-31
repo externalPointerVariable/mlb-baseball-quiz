@@ -12,5 +12,6 @@ router.register(r'quiz', views.QuizViewSet)
 urlpatterns = [
     path('', include(router.urls)),
     path('question/', views.generate_quiz),
+    path('login/', views.user_login),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]
