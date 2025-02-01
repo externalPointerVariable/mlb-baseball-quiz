@@ -3,14 +3,18 @@ from .models import User, Quiz
 from rest_framework.decorators import api_view
 from rest_framework import viewsets
 from core.serializers import UserSerializer, QuizSerializer
+from core.quizGen import generate_quiz
 
 @api_view(['GET'])
 def welcome(request):
     return response.Response({'message': 'Welcome to MLB API!'})
 
 @api_view(['POST'])
-def generate_quiz(request):
-    return response.Response({'message': 'Quiz generated!'})
+def generate_quiz_api(request):
+    topic  = request.data.get('topic')
+    difficulty = request.data.get('difficulty')
+    result = generate_quiz(topic, difficulty)
+    return response.Response(result, status=status.HTTP_200_OK)
 
 @api_view(['POST'])
 def user_login(request):

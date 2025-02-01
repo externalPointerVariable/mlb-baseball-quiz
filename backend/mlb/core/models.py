@@ -15,7 +15,7 @@ class Quiz(models.Model):
     quiz_id = models.AutoField(primary_key=True)
     user_id = models.ForeignKey(User, on_delete=models.CASCADE, to_field='user_id')
     topic_name = models.CharField(max_length=50)
-    difficulty_level = models.IntegerField()
+    difficulty_level = models.CharField(max_length=25)
     correct_answer = models.IntegerField()
     total_questions = models.IntegerField()
 
