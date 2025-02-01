@@ -5,6 +5,7 @@ from rest_framework import viewsets
 from core.serializers import UserSerializer, QuizSerializer
 from core.quizGen import generate_quiz
 from core.scorecalc import calculate_user_performace
+from core.mlbstats import baseball_players, baseball_teams, baseball_leagues
 
 @api_view(['GET'])
 def welcome(request):
@@ -22,6 +23,20 @@ def generate_quiz_api(request):
     difficulty = request.data.get('difficulty')
     result = generate_quiz(topic, difficulty)
     return response.Response(result, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+def get_baseball_leagues(request):
+    return response.Response(baseball_leagues(), status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+def get_baseball_teams(request):
+    sports_id = request.data.get('sports_id')
+    return response.Response(baseball_teams(sports_id), status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+def get_baseball_players(request):
+    team_id = request.data.get('team_id')
+    return response.Response(baseball_players(team_id), status=status.HTTP_200_OK)
 
 @api_view(['POST'])
 def user_login(request):
