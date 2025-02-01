@@ -4,7 +4,7 @@ from rest_framework.decorators import api_view
 from rest_framework import viewsets
 from core.serializers import UserSerializer, QuizSerializer
 from core.quizGen import generate_quiz
-from core.userMitigation import calculate_user_performace
+from core.scorecalc import calculate_user_performace
 
 @api_view(['GET'])
 def welcome(request):
@@ -48,3 +48,9 @@ class UserViewSet(viewsets.ModelViewSet):
 class QuizViewSet(viewsets.ModelViewSet):
     queryset = Quiz.objects.all()
     serializer_class = QuizSerializer
+
+    def create(self, request, *args, **kwargs):
+        if request.method == 'POST':
+            username = request.data.get('username')
+            calculate_user_performace(username)
+        return super().create(request, *args, **kwargs)
