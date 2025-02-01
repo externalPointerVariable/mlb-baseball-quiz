@@ -51,6 +51,6 @@ class QuizViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         if request.method == 'POST':
-            username = request.data.get('username')
-            calculate_user_performace(username)
+            user_id = request.data.get('user_id')
+            calculate_user_performace(user_id)
         return super().create(request, *args, **kwargs)
