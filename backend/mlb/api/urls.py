@@ -14,5 +14,8 @@ urlpatterns = [
     path('question/', views.generate_quiz_api),
     path('login/', views.user_login),
     path('leaderboard/', views.getLeaderboard),
+    path('leagues/', views.baseball_leagues),
+    path('teams/', views.baseball_teams),
+    path('players/', views.baseball_players),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]
