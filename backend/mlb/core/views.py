@@ -9,6 +9,12 @@ from core.quizGen import generate_quiz
 def welcome(request):
     return response.Response({'message': 'Welcome to MLB API!'})
 
+@api_view(['GET'])
+def getLeaderboard(request):
+    users = User.objects.values('username','user_performance').order_by('-user_performance')
+    return response.Response(users, status=status.HTTP_200_OK)
+
+
 @api_view(['POST'])
 def generate_quiz_api(request):
     topic  = request.data.get('topic')

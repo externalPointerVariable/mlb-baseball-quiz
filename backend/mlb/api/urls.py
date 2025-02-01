@@ -13,5 +13,6 @@ urlpatterns = [
     path('', include(router.urls)),
     path('question/', views.generate_quiz_api),
     path('login/', views.user_login),
+    path('leaderboard/', views.getLeaderboard),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]
