@@ -4,6 +4,7 @@ from rest_framework.decorators import api_view
 from rest_framework import viewsets
 from core.serializers import UserSerializer, QuizSerializer
 from core.quizGen import generate_quiz
+from core.userMitigation import calculate_user_performace
 
 @api_view(['GET'])
 def welcome(request):
