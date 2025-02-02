@@ -33,3 +33,4 @@ def baseball_players(team_id):
     except requests.exceptions.RequestException as e:
         raise SystemExit(e)
 
+# print(baseball_teams(1))

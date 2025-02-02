@@ -13,20 +13,49 @@ vertexai.init(project=project_id, location=location)
 model = GenerativeModel('gemini-pro')
 
 def generate_quiz(topic, difficulty_level):
-    try:
-        prompt = f'''Generate 10 Multiple Choice Questions in JSON format about the topic "{topic}" with difficulty level {difficulty_level}. Each question should follow this structure:
-        [
-            {{
-                "question": "Your generated question",
-                "options": ["Option A", "Option B", "Option C", "Option D"],
-                "answer": "The correct option"
-            }},
-            ...
-        ]
-        '''
+    prompt = f'''Generate 10 Multiple Choice Questions in JSON format about the topic "{topic}" with difficulty level {difficulty_level}. Each question should follow this structure:
+    [
+        {{
+            "question": "Your generated question",
+            "options": ["Option A", "Option B", "Option C", "Option D"],
+            "answer": "The correct option"
+        }},
+        ...
+    ]
+    '''
 
-        response = model.generate_content(prompt)
-        response = json.loads(response.text)
-        return json.dumps(response, indent=4)
-    except Exception as e:
-        return str(e)
+    response = model.generate_content(prompt)
+    response_text = response.text.strip()
+
+    # Fixing the JSON parsing code
+    try:
+        # Find the start of the JSON array
+        json_start = response_text.find('[')
+        if json_start == -1:
+            raise ValueError("No JSON array found in the response.")
+
+        # Extract the JSON string from the response
+        json_str = response_text[json_start:]
+
+        # Find the end of the JSON array
+        json_end = json_str.rfind(']')
+        if json_end == -1:
+            raise ValueError("JSON array not properly closed in the response.")
+
+        # Get the complete JSON array string
+        json_str = json_str[:json_end + 1]
+
+        # Parse the JSON string
+        response_data = json.loads(json_str)
+        return json.dumps(response_data, indent=4)
+    except json.JSONDecodeError as e:
+        print("Failed to parse JSON:", e)
+        print("Response text:", response_text)
+        return None
+    except ValueError as e:
+        print("Error:", e)
+        print("Response text:", response_text)
+        return None
+
+
+# print(generate_quiz("MLB", "Medium"))
