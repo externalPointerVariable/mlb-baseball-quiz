@@ -21,12 +21,13 @@ def getLeaderboard(request):
 def generate_quiz_api(request):
     topic  = request.data.get('topic')
     difficulty = request.data.get('difficulty')
-    result = generate_quiz(topic, difficulty)
+    result = generate_quiz(topic=topic, difficulty_level=difficulty)
     return response.Response(result, status=status.HTTP_200_OK)
 
 @api_view(['GET'])
 def get_baseball_leagues(request):
-    return response.Response(baseball_leagues(), status=status.HTTP_200_OK)
+    result = baseball_leagues()
+    return response.Response(result, status=status.HTTP_200_OK)
 
 @api_view(['POST'])
 def get_baseball_teams(request):

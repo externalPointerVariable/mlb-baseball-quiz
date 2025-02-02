@@ -9,7 +9,7 @@ def process_endpoint_url(endpoint_url):
     except requests.exceptions.RequestException as e:
         raise SystemExit(e)
 
-def baseball_leagues():
+def baseball_leagues(request):
     try:
         sports_endpoint_url = 'https://statsapi.mlb.com/api/v1/sports'
         sports_data = process_endpoint_url(sports_endpoint_url)
@@ -17,7 +17,7 @@ def baseball_leagues():
     except requests.exceptions.RequestException as e:
         raise SystemExit(e)
 
-def baseball_teams(sports_id):
+def baseball_teams(request, sports_id):
     try:
         teams_endpoint_url = f'https://statsapi.mlb.com/api/v1/teams?sportId={sports_id}'
         teams_data = process_endpoint_url(teams_endpoint_url)
@@ -25,7 +25,7 @@ def baseball_teams(sports_id):
     except requests.exceptions.RequestException as e:
         raise SystemExit(e)
 
-def baseball_players(team_id):
+def baseball_players(request, team_id):
     try:
         players_endpoint_url = f'https://statsapi.mlb.com/api/v1/teams/{team_id}/roster'
         players_data = process_endpoint_url(players_endpoint_url)
