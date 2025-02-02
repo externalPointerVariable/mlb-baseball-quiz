@@ -1,4 +1,7 @@
 from rest_framework import response, status, request
+from django.views.decorators.csrf import ensure_csrf_cookie
+from django.http import JsonResponse
+import requests
 from .models import User, Quiz
 from rest_framework.decorators import api_view
 from rest_framework import viewsets
@@ -29,15 +32,28 @@ def get_baseball_leagues(request):
     result = baseball_leagues()
     return response.Response(result, status=status.HTTP_200_OK)
 
+
 @api_view(['POST'])
 def get_baseball_teams(request):
     sports_id = request.data.get('sports_id')
-    return response.Response(baseball_teams(sports_id), status=status.HTTP_200_OK)
+    if not sports_id:
+        return response.Response({'error': 'sports_id is required'}, status=status.HTTP_400_BAD_REQUEST)
+    try:
+        teams = baseball_teams(sports_id=sports_id)
+        print(teams)
+        return response.Response(teams, status=status.HTTP_200_OK)
+    except requests.exceptions.RequestException as e:
+        return response.Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 @api_view(['POST'])
 def get_baseball_players(request):
     team_id = request.data.get('team_id')
     return response.Response(baseball_players(team_id), status=status.HTTP_200_OK)
+
+@ensure_csrf_cookie
+def get_csrf_token(request):
+    return JsonResponse({'detail': 'CSRF cookie set'})
 
 @api_view(['POST'])
 def user_login(request):

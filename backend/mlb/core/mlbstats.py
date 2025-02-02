@@ -1,5 +1,6 @@
 import requests
 import json
+from django.http import JsonResponse
 
 def process_endpoint_url(endpoint_url):
     try:
@@ -13,11 +14,11 @@ def baseball_leagues(request):
     try:
         sports_endpoint_url = 'https://statsapi.mlb.com/api/v1/sports'
         sports_data = process_endpoint_url(sports_endpoint_url)
-        return json.dumps(sports_data['sports'], indent=4)
+        return JsonResponse(sports_data['sports'], safe=False, json_dumps_params={'indent': 4})
     except requests.exceptions.RequestException as e:
-        raise SystemExit(e)
+        return JsonResponse({'error': str(e)}, status=500)
 
-def baseball_teams(request, sports_id):
+def baseball_teams(sports_id):
     try:
         teams_endpoint_url = f'https://statsapi.mlb.com/api/v1/teams?sportId={sports_id}'
         teams_data = process_endpoint_url(teams_endpoint_url)

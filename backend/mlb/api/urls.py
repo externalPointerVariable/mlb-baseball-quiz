@@ -17,5 +17,6 @@ urlpatterns = [
     path('leagues/', views.baseball_leagues),
     path('teams/', views.baseball_teams),
     path('players/', views.baseball_players),
+    path('csrf/', views.get_csrf_token),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]
