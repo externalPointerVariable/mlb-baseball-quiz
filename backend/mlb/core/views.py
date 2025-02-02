@@ -1,5 +1,6 @@
 from rest_framework import response, status, request
 from django.views.decorators.csrf import ensure_csrf_cookie
+from rest_framework.response import Response
 from django.http import JsonResponse
 import requests
 from .models import User, Quiz
@@ -32,18 +33,20 @@ def get_baseball_leagues(request):
     result = baseball_leagues()
     return response.Response(result, status=status.HTTP_200_OK)
 
-
+# views.py
 @api_view(['POST'])
 def get_baseball_teams(request):
-    sports_id = request.data.get('sports_id')
+    sports_id = request.data.get('id')  # Extract the integer ID
     if not sports_id:
-        return response.Response({'error': 'sports_id is required'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'error': 'sports_id is required'}, status=400)
     try:
-        teams = baseball_teams(sports_id=sports_id)
-        print(teams)
-        return response.Response(teams, status=status.HTTP_200_OK)
-    except requests.exceptions.RequestException as e:
-        return response.Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        # Pass the integer ID to baseball_teams, NOT the request object!
+        teams_data = baseball_teams(sports_id=sports_id)  # ✅ Correct parameter
+        if 'error' in teams_data:
+            return Response(teams_data, status=400)
+        return Response(teams_data, status=200)
+    except Exception as e:
+        return Response({'error': str(e)}, status=500)
 
 
 @api_view(['POST'])

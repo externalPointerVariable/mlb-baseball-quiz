@@ -2,13 +2,11 @@ import requests
 import json
 from django.http import JsonResponse
 
-def process_endpoint_url(endpoint_url):
-    try:
-        json_result = requests.get(endpoint_url).content
-        data = json.loads(json_result)
-        return data
-    except requests.exceptions.RequestException as e:
-        raise SystemExit(e)
+def process_endpoint_url(url):
+    response = requests.get(url)
+    response.raise_for_status()  # Raise HTTP errors
+    return response.json()  # Return parsed JSON data (dict)
+
 
 def baseball_leagues(request):
     try:
@@ -18,13 +16,15 @@ def baseball_leagues(request):
     except requests.exceptions.RequestException as e:
         return JsonResponse({'error': str(e)}, status=500)
 
-def baseball_teams(sports_id):
+# mlbstats.py
+def baseball_teams(sports_id):  # ✅ Accepts integer, not request
     try:
-        teams_endpoint_url = f'https://statsapi.mlb.com/api/v1/teams?sportId={sports_id}'
-        teams_data = process_endpoint_url(teams_endpoint_url)
-        return json.dumps(teams_data['teams'], indent=4)
+        url = f'https://statsapi.mlb.com/api/v1/teams?sportId={sports_id}'
+        teams_data = process_endpoint_url(url)
+        return teams_data  # Return raw data (dict/list)
     except requests.exceptions.RequestException as e:
-        raise SystemExit(e)
+        return {'error': str(e)}  # Return dict for errors
+    
 
 def baseball_players(request, team_id):
     try:
@@ -34,4 +34,4 @@ def baseball_players(request, team_id):
     except requests.exceptions.RequestException as e:
         raise SystemExit(e)
 
-# print(baseball_teams(1))
+print(baseball_teams(1))
