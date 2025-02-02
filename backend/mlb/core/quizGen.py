@@ -27,6 +27,7 @@ def generate_quiz(topic, difficulty_level):
     response = model.generate_content(prompt)
     response_text = response.text.strip()
 
+
     # Fixing the JSON parsing code
     try:
         # Find the start of the JSON array
