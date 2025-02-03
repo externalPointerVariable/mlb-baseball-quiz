@@ -31,7 +31,7 @@ def get_user_profile(request):
         user.favourite_team = request.data.get('favourite_team')
         user.favourite_player = request.data.get('favourite_player')
         user.save()
-        return response.Response({'message': 'User profile updated successfully!'}, status=status.HTTP_200_OK)
+        return response.Response({'message':True}, status=status.HTTP_200_OK)
 
 
 @api_view(['POST'])
@@ -70,7 +70,7 @@ def user_login(request):
     try:
         user = User.objects.get(username=username)
         if password == user.password:
-            return response.Response({'message': 'Login successful!', 
+            return response.Response({'message': True, 
                                       'user_id': user.user_id}, status=status.HTTP_200_OK)
         else:
             return response.Response({'error': 'Invalid password!'}, status=status.HTTP_400_BAD_REQUEST)
