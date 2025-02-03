@@ -14,6 +14,7 @@ urlpatterns = [
     path('question/', views.generate_quiz_api),
     path('login/', views.user_login),
     path('leaderboard/', views.getLeaderboard),
+    path('profile/', views.get_user_profile),
     path('leagues/', views.baseball_leagues),
     path('teams/', views.baseball_teams),
     path('players/', views.baseball_players),

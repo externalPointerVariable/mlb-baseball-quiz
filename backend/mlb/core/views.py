@@ -19,6 +19,20 @@ def getLeaderboard(request):
     users = User.objects.values('username','user_performance').order_by('-user_performance')
     return response.Response(users, status=status.HTTP_200_OK)
 
+@api_view(['POST', 'PATCH'])
+def get_user_profile(request):
+    if request.method == 'POST':
+        user_id = request.data.get('user_id')
+        user = User.objects.filter(user_id=user_id).values('username', 'email', 'user_performance', 'favourite_team', 'favourite_player')
+        return response.Response(user, status=status.HTTP_200_OK)
+    elif request.method == 'PATCH':
+        user_id = request.data.get('user_id')
+        user = User.objects.get(user_id=user_id)
+        user.favourite_team = request.data.get('favourite_team')
+        user.favourite_player = request.data.get('favourite_player')
+        user.save()
+        return response.Response({'message': 'User profile updated successfully!'}, status=status.HTTP_200_OK)
+
 
 @api_view(['POST'])
 def generate_quiz_api(request):

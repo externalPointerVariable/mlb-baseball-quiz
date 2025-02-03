@@ -8,8 +8,8 @@ class User(models.Model):
     email = models.EmailField(unique=True)
     password = models.CharField(max_length=50)
     user_performance  = models.IntegerField(default=0)
-    favourite_team = models.CharField(max_length=50)
-    favourite_player = models.CharField(max_length=50)
+    favourite_team = models.CharField(max_length=50, default='Null')
+    favourite_player = models.CharField(max_length=50, default='Null')
 
 class Quiz(models.Model):
     quiz_id = models.AutoField(primary_key=True)
