@@ -15,5 +15,5 @@ def calculate_user_performace(user_id):
         average_performance = (total_correct_answers / total_questions) * 100
 
     user = User.objects.get(user_id=user_id)
-    user.user_performance = average_performance
+    user.user_performance = total_correct_answers
     user.save()

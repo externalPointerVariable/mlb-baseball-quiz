@@ -3,32 +3,14 @@ import os
 import json
 from dotenv import load_dotenv
 from vertexai.preview.generative_models import GenerativeModel
-import google.generativeai as genai
 load_dotenv()
 
+project_id = os.getenv('PROJECT_ID')
+location = 'us-central1'
 
-# project_id = os.getenv('PROJECT_ID')
-# location = 'us-central1'
+vertexai.init(project=project_id, location=location)
 
-# vertexai.init(project=project_id, location=location)
-
-# model = GenerativeModel('gemini-pro')
-
-genai.configure(api_key=os.environ["GEMINI_API_KEY"])
-generation_config = {
-  "temperature": 1,
-  "top_p": 0.95,
-  "top_k": 40,
-  "max_output_tokens": 8192,
-  "response_mime_type": "text/plain",
-}
-
-model = genai.GenerativeModel(
-  model_name="gemini-1.5-flash-8b",
-  generation_config=generation_config,
-)
-
-
+model = GenerativeModel('gemini-pro')
 
 def generate_quiz(topic, difficulty_level):
     prompt = f'''Generate 10 Multiple Choice Questions in JSON format about the topic "{topic}" with difficulty level {difficulty_level}. Each question should follow this structure:

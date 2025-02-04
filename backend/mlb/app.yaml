@@ -1,0 +1,12 @@
+runtime: python310
+
+env_variables:
+  DJANGO_SETTINGS_MODULE: 'mlb.settings'
+  PROJECT_ID: ''
+  VERTEX_AI_LOCATION: 'us-central1'
+
+entrypoint: gunicorn -b :$PORT mlb.wsgi:application
+
+handlers:
+  - url: /.*
+    script: auto
