@@ -77,4 +77,4 @@ def generate_quiz(topic, difficulty_level):
         return None
 
 
-print(generate_quiz("MLB", "Medium"))
+# print(generate_quiz("MLB", "Medium"))
