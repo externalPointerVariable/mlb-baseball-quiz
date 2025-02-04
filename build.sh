@@ -4,9 +4,6 @@ set -e
 echo "Installing Python dependencies..."
 pip install -r requirements.txt
 
-echo "Navigating to mlb directory..."
-cd mlb
-
 echo "Applying database migrations..."
 python manage.py migrate
 
