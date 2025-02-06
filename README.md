@@ -1,8 +1,8 @@
-# MLB Personalized AI Highlights
+# MLP Quiz Application
 
 ## Backend Setup
 
-Welcome to the backend setup guide for the MLB Personalized AI Highlights project. Follow these steps to get your Django backend up and running.
+Welcome to the backend setup guide for the MLP Quiz Application project. Follow these steps to get your Django backend up and running.
 
 ### Prerequisites
 
